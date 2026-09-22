@@ -41,3 +41,14 @@ plt.show()
 # DREAM TEAM FIFA WORLD CUP 2022
 #--------------------------------------------------------
 df.drop_duplicates('player_positions')
+
+#--------------------------------------------------------
+# THE BEST PLAYER FROM EACH WORLD CUP COUNTRY
+#--------------------------------------------------------
+df_best_player = df.copy()
+df_best_player = df_best_player.drop_duplicates('nationality_name').reset_index(drop=True)
+
+fig, ax = plt.subplots(figsize=(10, 6), tight_layout=True)
+
+sns.barplot(data=df_best_player, x='overall', y='short_name')
+plt.show()
