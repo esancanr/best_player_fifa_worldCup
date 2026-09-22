@@ -1,6 +1,7 @@
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
+import numpy as np
 
 #--------------------------------------------------------
 # DATA EXTRACTION
@@ -29,3 +30,14 @@ df.sort_values(by=['overall', 'potential', 'value_eur'], ascending=False, inplac
 #--------------------------------------------------------
 # BEST PLAYER SCORE
 #--------------------------------------------------------
+fig, ax = plt.subplots(figsize=(12, 5), tight_layout=True)
+
+sns.histplot(df, x='overall', binwidth=1)
+bins = np.arange(df['overall'].min(), df['overall'].max(), 1)
+plt.xticks(bins)
+plt.show()
+
+#--------------------------------------------------------
+# DREAM TEAM FIFA WORLD CUP 2022
+#--------------------------------------------------------
+df.drop_duplicates('player_positions')
