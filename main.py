@@ -21,10 +21,10 @@ delete_index = df[df['short_name'].isin(players_missing_games)].index
 df.drop(delete_index, axis=0, inplace=True)
 
 
-teams = ['Qatar', 'Ecuador', 'Senegal', 'Netherlands', 'England', 'Iran', 'USA', 'Wales', 'Argentina', 'Saudi Arabia', 'Mexico',
+teams_worldcup = ['Qatar', 'Ecuador', 'Senegal', 'Netherlands', 'England', 'Iran', 'USA', 'Wales', 'Argentina', 'Saudi Arabia', 'Mexico',
     'Poland', 'France', 'Australia', 'Denmark', 'Tunisia','Spain', 'Costa Rica', 'Germany', 'Japan', 'Belgium', 'Canada', 'Morocco',
     'Croatia', 'Brazil', 'Serbia', 'Switzerland','Cameroon', 'Portugal', 'Ghana', 'Uruguay','South Korea']
-df = df[df['nationality_name'].isin(teams)]
+df = df[df['nationality_name'].isin(teams_worldcup)]
 df.sort_values(by=['overall', 'potential', 'value_eur'], ascending=False, inplace=True)
 
 #--------------------------------------------------------
@@ -51,4 +51,23 @@ df_best_player = df_best_player.drop_duplicates('nationality_name').reset_index(
 fig, ax = plt.subplots(figsize=(10, 6), tight_layout=True)
 
 sns.barplot(data=df_best_player, x='overall', y='short_name')
+plt.show()
+
+#--------------------------------------------------------
+# THE BEST TEAM FROM EACH COUNTRY
+#--------------------------------------------------------
+def get_best_team(country):
+    df_team = df.copy()
+    df_team = df_team.groupby(['nationality_name', 'player_positions']).head(2)
+    df_team = df_team[df_team['nationality_name'] == country].sort_values(by=['player_positions', 'overall', 'potential'], ascending=False)
+    return df_team
+
+average_score = [get_best_team(team)['overall'].mean() for team in teams_worldcup]
+
+df_average_score = pd.DataFrame({'Teams': teams_worldcup, 'Average_score': average_score})
+df_average_score = df_average_score.dropna()
+df_average_score = df_average_score.sort_values(by='Average_score', ascending=False)
+
+fig, ax = plt.subplots(figsize=(10, 6), tight_layout=True)
+sns.barplot(df_average_score[:10], x='Teams', y='Average_score')
 plt.show()
