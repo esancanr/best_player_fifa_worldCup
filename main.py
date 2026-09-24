@@ -71,3 +71,28 @@ df_average_score = df_average_score.sort_values(by='Average_score', ascending=Fa
 fig, ax = plt.subplots(figsize=(10, 6), tight_layout=True)
 sns.barplot(df_average_score[:10], x='Teams', y='Average_score')
 plt.show()
+
+#--------------------------------------------------------
+# BEST LINEUP 
+#--------------------------------------------------------
+dict_positions = {
+    '4-3-3': ['GK', 'RB', 'CB', 'CB', 'LB', 'CDM', 'CM', 'CAM', 'RW', 'ST', 'LV'],
+    '4-4-2': ['GK', 'RB', 'CB', 'CB', 'LB', 'RM', 'CM', 'CM', 'LM', 'ST', 'ST'],
+    '4-2-3-1': ['GK', 'RB', 'CB', 'CB', 'LB', 'CDM', 'CDM', 'CAM', 'CAM', 'CAM', 'ST'],
+}
+
+def get_best_lineup(nationality, lineup):
+    lineup_count = [lineup.count(i) for i in lineup]
+    df_lienup = pd.DataFrame({'position': lineup, 'count': lineup_count})
+    position_norepeats = df_lienup[df_lienup['count'] <= 1]['position'].values
+    position_repeats = df_lienup[df_lienup['count'] > 1]['position'].values
+
+    df_team = get_best_team(nationality)
+
+    df_lineup = pd.concat([
+        df_team[df_team['player_positions'].isin(position_norepeats)].drop_duplicates('player_positions', keep='first'),
+        df_team[df_team['player_positions'].isin(position_repeats)]
+    ])
+    return df_lineup[['short_name', 'overall', 'club_name', 'player_positions']]
+
+print(get_best_lineup('Brazil', dict_positions['4-4-2']))
